@@ -2,7 +2,7 @@ name: AWS ServiceConnection Key Rotation for DevOps account
 
 trigger: none
 schedules:
-- cron: "0 5 * * *"
+- cron: "0 5 * * *"    # Rotate the key every day at midnight
   displayName: Daily midnight build
   branches:
     include:
@@ -19,10 +19,10 @@ jobs:
     azure_project: '$(System.TeamProject)'
     azure_org_access_token: '$(System.AccessToken)'
     service_connection_list: 
-      - 'Development terraform'
-      - 'Development'
-    service_username: 'devopsserviceconnection'
-    aws_service_connection: "Development"
+      - 'Development terraform'   # Devops terraform service connection
+      - 'Development'             # Devops
+    service_username: 'devopsserviceconnection' # IAM user in AWSX
+    aws_service_connection: "Development"       # Devops service connection (used for performing AWS CLI commands)
     aws_region: 'us-east-1'
-    aws_secrets_name: 'keys/azuredevops'
+    aws_secrets_name: 'keys/azuredevops'        # Where to store the new access key (in case we need them no other way to retrieve them)
 

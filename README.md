@@ -54,9 +54,9 @@ displayName: Extract Existing Credential Keys
 Required inputs:
 | Input | Description | Found in... | Reference
 | :--- | :------- | :--- | :--- |
-|AWS Service Connection | Name of an AWS service connection from DevOps that has IAM privileges (passed as a parameter) | DevOps Infrastructure Service Connections | [DevOps Service Connections](https://dev.azure.com/jea-org/Infrastructure/_settings/adminservices)
-|AWS Region | The AWS Region - needed for the AWSShellScript parameter (passed as a parameter) | Passed from yaml pipeline | [Build Pipeline](https://dev.azure.com/jea-org/Infrastructure/_build?view=folders&treeState=XGtleS1yb3RhdGlvbnMkXGtleS1yb3RhdGlvbnNcYXdz)
-|Service Username | The IAM Username to update | Passed from yaml pipeline | [Build Pipeline](https://dev.azure.com/jea-org/Infrastructure/_build?view=folders&treeState=XGtleS1yb3RhdGlvbnMkXGtleS1yb3RhdGlvbnNcYXdz)
+|AWS Service Connection | Name of an AWS service connection from DevOps that has IAM privileges (passed as a parameter) | DevOps Infrastructure Service Connections | [DevOps Service Connections](https://learn.microsoft.com/en-us/azure/devops/pipelines/library/service-endpoints?view=azure-devops&tabs=yaml)
+|AWS Region | The AWS Region - needed for the AWSShellScript parameter (passed as a parameter) | Passed from yaml pipeline | [Build Pipeline](https://learn.microsoft.com/en-us/azure/devops/pipelines/get-started/key-pipelines-concepts?view=azure-devops)
+|Service Username | The IAM Username to update | Passed from yaml pipeline | [Build Pipeline](https://learn.microsoft.com/en-us/azure/devops/pipelines/get-started/key-pipelines-concepts?view=azure-devops)
 
 
 
@@ -80,9 +80,9 @@ In AWS IAM a user (or service account) is only allowed max of 2 access key/secre
 Required inputs:
 | Input | Description | Found in... | Reference
 | :--- | :------- | :--- | :--- |
-|AWS Service Connection | Name of an AWS service connection from DevOps that has IAM privileges (passed as a parameter) | DevOps Infrastructure Service Connections | [DevOps Service Connections](https://dev.azure.com/jea-org/Infrastructure/_settings/adminservices)
-|AWS Region | The AWS Region - needed for the AWSShellScript parameter (passed as a parameter) | Passed from yaml pipeline | [Build Pipeline](https://dev.azure.com/jea-org/Infrastructure/_build?view=folders&treeState=XGtleS1yb3RhdGlvbnMkXGtleS1yb3RhdGlvbnNcYXdz)
-|Service Username | The IAM Username to update | Passed from yaml pipeline | [Build Pipeline](https://dev.azure.com/jea-org/Infrastructure/_build?view=folders&treeState=XGtleS1yb3RhdGlvbnMkXGtleS1yb3RhdGlvbnNcYXdz)
+|AWS Service Connection | Name of an AWS service connection from DevOps that has IAM privileges (passed as a parameter) | DevOps Infrastructure Service Connections | [DevOps Service Connections](https://learn.microsoft.com/en-us/azure/devops/pipelines/library/service-endpoints?view=azure-devops&tabs=yaml)
+|AWS Region | The AWS Region - needed for the AWSShellScript parameter (passed as a parameter) | Passed from yaml pipeline | [Build Pipeline](https://learn.microsoft.com/en-us/azure/devops/pipelines/get-started/key-pipelines-concepts?view=azure-devops)
+|Service Username | The IAM Username to update | Passed from yaml pipeline | [Build Pipeline](https://learn.microsoft.com/en-us/azure/devops/pipelines/get-started/key-pipelines-concepts?view=azure-devops)
 |Access Key Id to Delete | The IAM Username access key to delete | Retrieve from previous step | Step 1 above
 
 ---
@@ -103,9 +103,9 @@ Using AWSShellScript@1 task, creates the new access key using the ```aws iam cre
 Required inputs:
 | Input | Description | Found in... | Reference
 | :--- | :------- | :--- | :--- |
-|AWS Service Connection | Name of an AWS service connection from DevOps that has IAM privileges (passed as a parameter) | DevOps Infrastructure Service Connections | [DevOps Service Connections](https://dev.azure.com/jea-org/Infrastructure/_settings/adminservices)
-|AWS Region | The AWS Region - needed for the AWSShellScript parameter (passed as a parameter) | Passed from yaml pipeline | [Build Pipeline](https://dev.azure.com/jea-org/Infrastructure/_build?view=folders&treeState=XGtleS1yb3RhdGlvbnMkXGtleS1yb3RhdGlvbnNcYXdz)
-|Service Username | The IAM Username to create new key for | Passed from yaml pipeline | [Build Pipeline](https://dev.azure.com/jea-org/Infrastructure/_build?view=folders&treeState=XGtleS1yb3RhdGlvbnMkXGtleS1yb3RhdGlvbnNcYXdz)
+|AWS Service Connection | Name of an AWS service connection from DevOps that has IAM privileges (passed as a parameter) | DevOps Infrastructure Service Connections | [DevOps Service Connections](https://learn.microsoft.com/en-us/azure/devops/pipelines/library/service-endpoints?view=azure-devops&tabs=yaml)
+|AWS Region | The AWS Region - needed for the AWSShellScript parameter (passed as a parameter) | Passed from yaml pipeline | [Build Pipeline](https://learn.microsoft.com/en-us/azure/devops/pipelines/get-started/key-pipelines-concepts?view=azure-devops)
+|Service Username | The IAM Username to create new key for | Passed from yaml pipeline | [Build Pipeline](https://learn.microsoft.com/en-us/azure/devops/pipelines/get-started/key-pipelines-concepts?view=azure-devops)
 
 
 ---
@@ -130,7 +130,7 @@ For each of the service connections passed to the template as a service_connecti
 Required inputs:
 | Input | Description | Found in... | Reference
 | :--- | :------- | :--- | :--- |
-|AWS Service Connection | Name of an AWS service connection from DevOps that needs to be updated | DevOps Infrastructure Service Connections | [DevOps Service Connections](https://dev.azure.com/jea-org/Infrastructure/_settings/adminservices)
+|AWS Service Connection | Name of an AWS service connection from DevOps that needs to be updated | DevOps Infrastructure Service Connections | [DevOps Service Connections](https://learn.microsoft.com/en-us/azure/devops/pipelines/library/service-endpoints?view=azure-devops&tabs=yaml)
 |Org Url | The DevOps organization url (used for calling rest api) | Passed from yaml pipeline (System.TeamFoundationCollectionUri) | [DevOps Predefined variables](https://learn.microsoft.com/en-us/azure/devops/pipelines/build/variables?view=azure-devops&tabs=yaml)
 |Project name | Name of the DevOps project | Passed from yaml pipeline (System.TeamProject) | [DevOps Predefined variables](https://learn.microsoft.com/en-us/azure/devops/pipelines/build/variables?view=azure-devops&tabs=yaml)
 |New Access Key Id | Newly created access key id | Created in Step 3 above | Step 3
@@ -162,9 +162,9 @@ Stored the newly created access-key and secret in the AWS SecretsManager service
 Required inputs:
 | Input | Description | Found in... | Reference
 | :--- | :------- | :--- | :--- |
-|AWS Service Connection | Name of an AWS service connection from DevOps that has IAM privileges (passed as a parameter) | DevOps Infrastructure Service Connections | [DevOps Service Connections](https://dev.azure.com/jea-org/Infrastructure/_settings/adminservices)
-|AWS Region | The AWS Region - needed for the AWSShellScript parameter (passed as a parameter) | Passed from yaml pipeline | [Build Pipeline](https://dev.azure.com/jea-org/Infrastructure/_build?view=folders&treeState=XGtleS1yb3RhdGlvbnMkXGtleS1yb3RhdGlvbnNcYXdz)
-|Secrets Name | The SecretsManager name to update/create | Passed from yaml pipeline | [Build Pipeline](https://dev.azure.com/jea-org/Infrastructure/_build?view=folders&treeState=XGtleS1yb3RhdGlvbnMkXGtleS1yb3RhdGlvbnNcYXdz)
+|AWS Service Connection | Name of an AWS service connection from DevOps that has IAM privileges (passed as a parameter) | DevOps Infrastructure Service Connections | [DevOps Service Connections](https://learn.microsoft.com/en-us/azure/devops/pipelines/library/service-endpoints?view=azure-devops&tabs=yaml)
+|AWS Region | The AWS Region - needed for the AWSShellScript parameter (passed as a parameter) | Passed from yaml pipeline | [Build Pipeline](https://learn.microsoft.com/en-us/azure/devops/pipelines/get-started/key-pipelines-concepts?view=azure-devops)
+|Secrets Name | The SecretsManager name to update/create | Passed from yaml pipeline | [Build Pipeline](https://learn.microsoft.com/en-us/azure/devops/pipelines/get-started/key-pipelines-concepts?view=azure-devops)
 |New Access Key Id | Newly created access key id | Created in Step 3 above | Step 3
 |New Secret Key | Newly created access secret id | Created in Step 3 above | Step 3
 
@@ -186,8 +186,8 @@ Once all of the above steps are successful, remove the old access key using the 
 Required inputs:
 | Input | Description | Found in... | Reference
 | :--- | :------- | :--- | :--- |
-|AWS Service Connection | Name of an AWS service connection from DevOps that has IAM privileges (passed as a parameter) | DevOps Infrastructure Service Connections | [DevOps Service Connections](https://dev.azure.com/jea-org/Infrastructure/_settings/adminservices)
-|AWS Region | The AWS Region - needed for the AWSShellScript parameter (passed as a parameter) | Passed from yaml pipeline | [Build Pipeline](https://dev.azure.com/jea-org/Infrastructure/_build?view=folders&treeState=XGtleS1yb3RhdGlvbnMkXGtleS1yb3RhdGlvbnNcYXdz)
-|Service Username | The IAM Username to update | Passed from yaml pipeline | [Build Pipeline](https://dev.azure.com/jea-org/Infrastructure/_build?view=folders&treeState=XGtleS1yb3RhdGlvbnMkXGtleS1yb3RhdGlvbnNcYXdz)
+|AWS Service Connection | Name of an AWS service connection from DevOps that has IAM privileges (passed as a parameter) | DevOps Infrastructure Service Connections | [DevOps Service Connections](https://learn.microsoft.com/en-us/azure/devops/pipelines/library/service-endpoints?view=azure-devops&tabs=yaml)
+|AWS Region | The AWS Region - needed for the AWSShellScript parameter (passed as a parameter) | Passed from yaml pipeline | [Build Pipeline](https://learn.microsoft.com/en-us/azure/devops/pipelines/get-started/key-pipelines-concepts?view=azure-devops)
+|Service Username | The IAM Username to update | Passed from yaml pipeline | [Build Pipeline](https://learn.microsoft.com/en-us/azure/devops/pipelines/get-started/key-pipelines-concepts?view=azure-devops)
 |Access Key Id to Delete | The IAM Username access key to delete | Retrieve from step 1 | Step 1 above
 
