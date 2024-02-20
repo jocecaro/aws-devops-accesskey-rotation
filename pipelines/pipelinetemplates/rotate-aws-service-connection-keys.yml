@@ -1,0 +1,144 @@
+parameters:
+  - name: job_name
+    displayName: Unique name for the job
+    type: string
+  - name: azure_org_url
+    displayName: Name that the service connection belongs to
+    type: string
+  - name: azure_project
+    displayName: Name of the project that the serfvice connection belongs to
+    type: string
+  - name: azure_org_access_token
+    displayName: Access token to use when calling rest api to update service connection
+    type: string
+  - name: service_connection_list
+    displayName: AWS Service Connections to update for same username/secret
+    type: object
+    default: {}
+  - name: service_username
+    displayName: AWS user name that the service connection belongs to
+    type: string
+  - name: aws_service_connection
+    displayName: AWS Service connection for aws cli commands
+    type: string
+  - name: aws_region
+    displayName: The AWS Region that the service connection belongs to
+    type: string
+  - name: aws_secrets_name
+    displayName: The AWS SercretsManager Name or ID to save the credentials in
+
+jobs:
+- job: ${{parameters.job_name}}
+  variables:
+    newAccessKeyId: ''
+    newSecretKey: ''
+    oldAccessKey1: ''
+    oldAccessKey2: ''
+    totalKeys: 0
+
+  steps:
+
+  # Get the current access keys and make sure there is only one,
+  #  if 2 access keys then need to remove one because there can only be
+  #  2 access keys for any given user
+  - task: AWSShellScript@1
+    inputs:
+      awsCredentials: ${{parameters.aws_service_connection}}
+      regionName: ${{parameters.aws_region}}
+      scriptType: 'inline'
+      inlineScript: |
+        aws iam list-access-keys --user-name ${{parameters.service_username}} --output json > ./awsCurrentUser.json
+    displayName: Get the current Access Keys from AWS
+  
+  # Extract access key (can have up to 2 access keys per user)
+  - bash: |
+      echo ## Extract access key 1 and 2 ##    
+      json=$(cat ./awsCurrentUser.json)
+      accessKey1=$(echo $json | jq -c '.AccessKeyMetadata' | jq -c '.[0]' | jq -r '.AccessKeyId')
+      accessKey2=$(echo $json | jq -c '.AccessKeyMetadata' | jq -c '.[1]' | jq -r '.AccessKeyId')
+      keyCount=$(echo $json | jq -r '.AccessKeyMetadata | length')
+      echo ## Assign new access key to pipeline variable ##
+      echo "##vso[task.setvariable variable=oldAccessKey1;issecret=false]$accessKey1"
+      echo "##vso[task.setvariable variable=oldAccessKey2;issecret=false]$accessKey2"
+      echo "##vso[task.setvariable variable=totalKeys;issecret=false]$keyCount"
+    displayName: Extract Existing Credential Keys
+
+  # Delete if more than one access key
+  - task: AWSShellScript@1
+    condition: eq(variables.totalKeys, 2)  # Task will run if more than 1 key is there
+    inputs:
+      awsCredentials: ${{parameters.aws_service_connection}}
+      regionName: ${{parameters.aws_region}}
+      scriptType: 'inline'
+      inlineScript: |
+        aws iam delete-access-key --user-name ${{parameters.service_username}} --access-key-id $(oldAccessKey2)
+    displayName: Delete if more than one AWS Keys
+
+  - task: AWSShellScript@1
+    inputs:
+      awsCredentials: ${{parameters.aws_service_connection}}
+      regionName: ${{parameters.aws_region}}
+      scriptType: 'inline'
+      inlineScript: |
+        aws iam create-access-key --user-name ${{parameters.service_username}} --output json > ./awsResults.json
+    displayName: New Access Keys from AWS
+
+  - bash: |
+      echo ## Extract the keys from the returned json ##
+      json=$(cat ./awsResults.json)
+      accessKeyId=$(echo $json | jq -r '.AccessKey' | jq -r '.AccessKeyId')
+      secretKey=$(echo $json | jq -r '.AccessKey' | jq -r '.SecretAccessKey')
+      echo ## Assign new access key to pipeline variable ##
+      echo "##vso[task.setvariable variable=newAccessKeyId;issecret=true]$accessKeyId"
+      echo "##vso[task.setvariable variable=newSecretKey;issecret=true]$secretKey"
+    displayName: Extract Credentials
+
+  #- bash: |
+  #    echo 'newAccessKeyId'
+  #    echo $(newAccessKeyId)
+  #    echo 'token'
+  #    xxd -p <<< $(System.AccessToken) -c 256
+  #  env:
+  #    SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+  #  displayName: Debugging
+
+  - ${{ each service_connection_to_update in parameters.service_connection_list }}:
+    - task: PythonScript@0
+      inputs:
+        scriptSource: 'filePath'
+        scriptPath: '$(System.DefaultWorkingDirectory)/pipelines/pipelinescripts/updateDevOpsServiceConnection.py'
+        arguments: '"${{ service_connection_to_update }}"' 
+      env:
+        ORG_ACCESSTOKEN: ${{ parameters.azure_org_access_token }}
+        ORG_URL: ${{ parameters.azure_org_url }}
+        ORG_PROJECT_NAME: ${{ parameters.azure_project }}
+        NEW_USERNAME: '$(newAccessKeyId)'
+        NEW_SECRET: '$(newSecretKey)'
+      displayName: Update Service Connection with new credentials
+
+  - task: SecretsManagerCreateOrUpdateSecret@1
+    inputs:
+      awsCredentials: '${{parameters.aws_service_connection}}'
+      regionName: '${{parameters.aws_region}}'
+      secretNameOrId: '${{parameters.aws_secrets_name}}'
+      description: 'access and secrets auto-rotated from azure devops'
+      secretValueSource: 'inline'
+      secretValue: '{"accesskey":"$(newAccessKeyId)","secretskey":"$(newSecretKey)"}'
+      autoCreateSecret: true
+      tags: |
+        Name=SecretsKeys
+        Stack=AzureDevOps
+      logRequest: true
+      logResponse: true
+    displayName: Update Secrets Manager with new keys
+
+  - task: AWSShellScript@1
+    condition: gt(variables.totalKeys, 0)  # Task will run if there is an old key to remove  
+    inputs:
+      awsCredentials: ${{parameters.aws_service_connection}}
+      regionName: ${{parameters.aws_region}}
+      scriptType: 'inline'
+      inlineScript: |
+        aws iam delete-access-key --user-name ${{parameters.service_username}} --access-key-id $(oldAccessKey1)
+    displayName: Delete Old AWS Keys
+

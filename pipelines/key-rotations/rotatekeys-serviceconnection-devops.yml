@@ -1,0 +1,28 @@
+name: AWS ServiceConnection Key Rotation for DevOps account
+
+trigger: none
+schedules:
+- cron: "0 5 * * *"
+  displayName: Daily midnight build
+  branches:
+    include:
+    - main
+  always: true # always run even when there is no code change
+variables:
+- group: service-connection-variable-group
+
+jobs:
+- template: /pipelines/pipelinetemplates/rotate-aws-service-connection-keys.yml
+  parameters:
+    job_name: "development_account_key_rotation"
+    azure_org_url: '$(System.TeamFoundationCollectionUri)'
+    azure_project: '$(System.TeamProject)'
+    azure_org_access_token: '$(System.AccessToken)'
+    service_connection_list: 
+      - 'Development terraform'
+      - 'Development'
+    service_username: 'devopsserviceconnection'
+    aws_service_connection: "Development"
+    aws_region: 'us-east-1'
+    aws_secrets_name: 'keys/azuredevops'
+
