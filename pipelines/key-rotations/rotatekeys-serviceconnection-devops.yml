@@ -8,8 +8,6 @@ schedules:
     include:
     - main
   always: true # always run even when there is no code change
-variables:
-- group: service-connection-variable-group
 
 jobs:
 - template: /pipelines/pipelinetemplates/rotate-aws-service-connection-keys.yml
@@ -19,10 +17,10 @@ jobs:
     azure_project: '$(System.TeamProject)'
     azure_org_access_token: '$(System.AccessToken)'
     service_connection_list: 
-      - 'Development terraform'   # Devops terraform service connection
-      - 'Development'             # Devops
-    service_username: 'devopsserviceconnection' # IAM user in AWSX
-    aws_service_connection: "Development"       # Devops service connection (used for performing AWS CLI commands)
+      - 'Development terraform'   # Devops terraform service connection name (for AWS)
+      - 'Development'             # Devops service connection name name (for AWS)
+    service_username: 'devopsserviceconnection' # IAM user in AWS
+    aws_service_connection: "Development"       # Devops service connection name (used for performing AWS CLI commands)
     aws_region: 'us-east-1'
     aws_secrets_name: 'keys/azuredevops'        # Where to store the new access key (in case we need them no other way to retrieve them)
 
