@@ -23,4 +23,3 @@ jobs:
     aws_service_connection: "Development"       # Devops service connection name (used for performing AWS CLI commands)
     aws_region: 'us-east-1'
     aws_secrets_name: 'keys/azuredevops'        # Where to store the new access key (in case we need them no other way to retrieve them)
-
